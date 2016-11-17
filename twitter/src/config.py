@@ -10,12 +10,12 @@ options = None
 def assertOptionsInit():
     assert options is not None, "options not initialized yet"
 
-# TODO: need to add the options to fetch several users' statuses
+
 def getCmdLineOptions():
     parser = argparse.ArgumentParser(description='Twitter Statuses Fetcher')
 
-    parser.add_argument('-n', '--screenName', required=True,
-                        help='The screen name of the person you want to fetch')
+    parser.add_argument('-n', '--screenName', required=True, action='append',
+                        help='The screen name of the person you want to fetch. Use -n <NAME1> -n <NAME2> for multiple names')
     parser.add_argument('-t', '--tweetsToFetch', default=50, type=int,
                         help='The amount of tweets you want to fetch. If left empty the default is 50')
 

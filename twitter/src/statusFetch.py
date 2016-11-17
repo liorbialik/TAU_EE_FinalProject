@@ -21,9 +21,9 @@ def getTwitterApi():
     return api
 
 
-def statusFetch(screenName, tweetsToFetch):
+def fetchStatusText(screenName, tweetsToFetch):
     api = getTwitterApi()
-    statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch)
+    statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch) # TODO: add the options to get for multiple users' statuses
     return [status.text for status in statuses]
 
 
@@ -34,8 +34,10 @@ if __name__ == "__main__":
         print(e.message)
         sys.exit(1)
 
-    completeStatusText = statusFetch(screenName=config.getScreenName(),
-                                   tweetsToFetch=config.getTweetsToFetch())
 
-    for singleStatusText in completeStatusText: # TODO: need to create a printing function that allows printing by hashtaags
+    completeStatusText = fetchStatusText(screenName=config.getScreenName(),
+                                         tweetsToFetch=config.getTweetsToFetch())
+
+    # TODO: need to create a printing function that allows printing by hashtaags
+    for singleStatusText in completeStatusText:
         print(singleStatusText)
