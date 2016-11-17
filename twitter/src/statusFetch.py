@@ -37,5 +37,5 @@ if __name__ == "__main__":
     completeStatusText = statusFetch(screenName=config.getScreenName(),
                                    tweetsToFetch=config.getTweetsToFetch())
 
-    for singleStatusText in completeStatusText:
+    for singleStatusText in completeStatusText: # TODO: need to create a printing function that allows printing by hashtaags
         print(singleStatusText)

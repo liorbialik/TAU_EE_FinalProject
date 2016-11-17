@@ -10,7 +10,7 @@ options = None
 def assertOptionsInit():
     assert options is not None, "options not initialized yet"
 
-
+# TODO: need to add the options to fetch several users' statuses
 def getCmdLineOptions():
     parser = argparse.ArgumentParser(description='Twitter Statuses Fetcher')
 
