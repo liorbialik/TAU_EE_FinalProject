@@ -3,10 +3,11 @@
 @author: Lior Bialik
 """
 
-import twitter
+import twitter # https://github.com/bear/python-twitter
 import config
 import sys
 
+# keys from https://apps.twitter.com/ for the app TUA_EE_Project_statusFetch:
 twitterConsumerKey = 'kPIBTAAB1n9Wp5MEu1fdwzsXj'
 twitterConsumerSecret = 'dFj6lz5iLtUvXXacQLWuJ3xubMelP2WQep5efvm195TEMoo4JW'
 twitterAccessTokenKey = '799287561332162560-UFz71F1VPcNDns1fWV9qAj4qKRxkyxU'
@@ -21,11 +22,15 @@ def getTwitterApi():
     return api
 
 
-def fetchStatusText(screenName, tweetsToFetch):
+def fetchStatusText(screenNames, tweetsToFetch):
     api = getTwitterApi()
-    statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch) # TODO: add the options to get for multiple users' statuses
-    return [status.text for status in statuses]
 
+    # TODO: need to create an external function for getting the statuses, and in case of all implement 'def getAllTweets'
+    for screenName in screenNames:
+        statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch)
+        completeStatusesText = [status.text for status in statuses]
+        for singleStatusText in completeStatusesText: # TODO: add separate printing function
+            print(singleStatusText)
 
 if __name__ == "__main__":
     try:
@@ -35,9 +40,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
 
-    completeStatusText = fetchStatusText(screenName=config.getScreenName(),
-                                         tweetsToFetch=config.getTweetsToFetch())
+    fetchStatusText(screenNames=config.getScreenName(),
+                    tweetsToFetch=config.getTweetsToFetch())
 
-    # TODO: need to create a printing function that allows printing by hashtaags
-    for singleStatusText in completeStatusText:
-        print(singleStatusText)
+
