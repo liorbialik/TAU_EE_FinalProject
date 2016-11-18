@@ -1,17 +1,24 @@
 """
 @date:   November 17, 2016
-@author: Lior Bialik
+@author: Lior Bialik & Avihai Ezaguy
 """
 
 import twitter # https://github.com/bear/python-twitter
 import config
 import sys
+import datetime
 
 # keys from https://apps.twitter.com/ for the app TUA_EE_Project_statusFetch:
 twitterConsumerKey = 'kPIBTAAB1n9Wp5MEu1fdwzsXj'
 twitterConsumerSecret = 'dFj6lz5iLtUvXXacQLWuJ3xubMelP2WQep5efvm195TEMoo4JW'
 twitterAccessTokenKey = '799287561332162560-UFz71F1VPcNDns1fWV9qAj4qKRxkyxU'
 twitterAccessTokenSecret = '9KebOrRMw63HHZK9l31SsM5BnYJpz9nqyq1905zpYUCCQ'
+
+def getTimeStamp(api_TimeStamp):
+    timestamp = datetime.datetime.strptime(api_TimeStamp, '%a %b %d %H:%M:%S +0000 %Y')
+    fmt = '%Y-%m-%d %H:%M:%S: '
+    return timestamp.strftime(fmt)
+    
 
 
 def getTwitterApi():
@@ -28,7 +35,7 @@ def fetchStatusText(screenNames, tweetsToFetch):
     # TODO: need to create an external function for getting the statuses, and in case of all implement 'def getAllTweets'
     for screenName in screenNames:
         statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch)
-        completeStatusesText = [status.text for status in statuses]
+        completeStatusesText = [getTimeStamp(status.created_at) + status.text for status in statuses]
         for singleStatusText in completeStatusesText: # TODO: add separate printing function
             print(singleStatusText)
 
