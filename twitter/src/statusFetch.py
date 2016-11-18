@@ -16,6 +16,9 @@ twitterAccessTokenSecret = '9KebOrRMw63HHZK9l31SsM5BnYJpz9nqyq1905zpYUCCQ'
 
 def getTimeStamp(api_TimeStamp):
     timestamp = datetime.datetime.strptime(api_TimeStamp, '%a %b %d %H:%M:%S +0000 %Y')
+    return timestamp
+
+def strTimeStamp(timestamp):
     fmt = '%Y-%m-%d %H:%M:%S: '
     return timestamp.strftime(fmt)
     
@@ -29,15 +32,34 @@ def getTwitterApi():
     return api
 
 
-def fetchStatusText(screenNames, tweetsToFetch):
+def fetchStatusText(screenNames, tweetsToFetch, dates):
     api = getTwitterApi()
-
-    # TODO: need to create an external function for getting the statuses, and in case of all implement 'def getAllTweets'
+    
     for screenName in screenNames:
-        statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch)
-        completeStatusesText = [getTimeStamp(status.created_at) + status.text for status in statuses]
-        for singleStatusText in completeStatusesText: # TODO: add separate printing function
-            print(singleStatusText)
+        if tweetsToFetch != None: # -t was selected
+    # TODO: need to create an external function for getting the statuses, and in case of all implement 'def getAllTweets'
+            statuses = api.GetUserTimeline(screen_name=screenName, count=tweetsToFetch)
+            completeStatusesText = [strTimeStamp(getTimeStamp(status.created_at)) + status.text for status in statuses]
+            for singleStatusText in completeStatusesText: # TODO: add separate printing function
+                print(singleStatusText)
+        
+        # -e, -s selected
+        else:
+            startDate = dates[0]
+            endDate = dates[1]
+            if endDate == None:
+                endDate = datetime.datetime.now()
+            if startDate == None:
+                startDate = datetime.datetime.strptime('0', '%S') # EPOCH time
+            statuses = api.GetUserTimeline(screen_name=screenName, since_id=0)
+            completeStatusesText = [strTimeStamp(getTimeStamp(status.created_at)) + status.text for status in statuses
+                                    if getTimeStamp(status.created_at) < endDate and getTimeStamp(status.created_at) > startDate]
+            for singleStatusText in completeStatusesText: # TODO: add separate printing function
+                print(singleStatusText)
+
+            
+            
+
 
 if __name__ == "__main__":
     try:
@@ -48,6 +70,6 @@ if __name__ == "__main__":
 
 
     fetchStatusText(screenNames=config.getScreenName(),
-                    tweetsToFetch=config.getTweetsToFetch())
-
+                    tweetsToFetch=config.getTweetsToFetch(),
+                    dates=config.getDatesToFetch())
 
