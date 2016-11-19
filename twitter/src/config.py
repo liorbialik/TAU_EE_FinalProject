@@ -21,13 +21,13 @@ def getCmdLineOptions():
 
     parser.add_argument('-u', '--screenName', required=True, action='append',
                         help='The screen name of the person you want to fetch. Use -n <NAME1> -n <NAME2> for multiple names.'
-                             'Example: -n @BarackObama -n @realDonaldTrump')
+                             'Example: -u @BarackObama -u @realDonaldTrump')
 
     parser.add_argument('-s', '--startDate', default=epochTime, type=assertValidDate,
-                        help='Filter the start date of all twits, use format yy-mm-dd')
+                        help='Filter the start date of all twits, use format dd-mm-yy')
 
     parser.add_argument('-e', '--endDate', default=currentTime, type=assertValidDate,
-                        help='Filter the end date of all twits, use format yy-mm-dd')
+                        help='Filter the end date of all twits, use format dd-mm-yy')
 
     cmdLineOptions = parser.parse_args()
     
@@ -46,7 +46,9 @@ def getStartDateToFilter():
 
 def getEndDateToFilter():
     assertOptionsInit()
-    return options.endDate
+    # time of day selected is 00:00 therefore need to add one day in order to include it.
+    # if date+1d is newer than currentTime twitter API wouldn't fail
+    return options.endDate + datetime.timedelta(days=1)
 
 
 def assertValidDate(date):
@@ -54,8 +56,8 @@ def assertValidDate(date):
         return date
     else:
         try:
-            date = datetime.datetime.strptime(date, '%y-%m-%d')
+            date = datetime.datetime.strptime(date, '%d-%m-%y')
             return date
         except ValueError:
-            raise ValueError("Wrong input. Date should be in format y-m-d")
+            raise ValueError("Wrong input. Date should be in format dd-mm-yy")
 

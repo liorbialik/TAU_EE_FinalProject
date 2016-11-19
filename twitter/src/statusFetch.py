@@ -62,8 +62,8 @@ def fetchTweetsToCsv(screenNames, startDateFilter, endDateFilter):
         print("Getting tweets for user %s:" % screenName)
         allTweetsList = []
 
-        # download the first batch of tweets from the website
-        newTweets = api.GetUserTimeline(screen_name=screenName, count=MAX_NUMBER_OF_TWEETS_PER_REQUEST)
+        # download the first tweet from the website
+        newTweets = api.GetUserTimeline(screen_name=screenName, count=1)
 
         # extend the list of all tweets with the latest batch downloaded
         allTweetsList.extend(newTweets)
@@ -75,17 +75,37 @@ def fetchTweetsToCsv(screenNames, startDateFilter, endDateFilter):
         while len(newTweets) > 0:
             newTweets = api.GetUserTimeline(screen_name=screenName, count=MAX_NUMBER_OF_TWEETS_PER_REQUEST,
                                             max_id=oldestTweetId)
+            
+            # set the oldest tweet ID number in the current batch to be the latest ID to be pulled in the next batch
+            oldestTweetId = newTweets[-1].id - 1
 
+            # if newest tweet of newTweets is newer than endDateFilter - continue to next request
+            if getTimestamp(newTweets[-1].created_at) > endDateFilter:
+                continue 
+            
             # extend the list of all tweets with the latest batch downloaded
             allTweetsList.extend(newTweets)
 
-            # set the oldest tweet ID number in the current batch to be the latest ID to be pulled in the next batch
-            oldestTweetId = allTweetsList[-1].id - 1
-
+            # if oldest tweet of newTweets is older than startDateFilter - stop requesting for new tweets
+            if getTimestamp(newTweets[-1].created_at) < startDateFilter:
+                break 
+            
         print("Filtering tweets by date")
+        
+        # remove newer tweets than endDateFilter
+        for i, tweet in enumerate(allTweetsList):
+            if getTimestamp(tweet.created_at) < endDateFilter:
+                break
+        allTweetsList = allTweetsList[i:]
+        
+        # remove older tweets then startDateFilter
+        for i, tweet in enumerate(reversed(allTweetsList)):
+            if getTimestamp(tweet.created_at) > startDateFilter:
+                break
+        allTweetsList = allTweetsList[:-i]
+        
         readableFormatTweetsList = [[tweet.id_str, stringTimestamp(getTimestamp(tweet.created_at)),
-                                     tweet.text.encode("utf-8")] for tweet in allTweetsList
-                                    if endDateFilter > getTimestamp(tweet.created_at) > startDateFilter]
+                                     tweet.text.encode("utf-8")] for tweet in allTweetsList]
 
         saveTweetsToFile(screenName, readableFormatTweetsList)
 
