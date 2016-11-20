@@ -10,7 +10,7 @@ user can filter by start and end dates
 3. run the script using the following command:
 ```$ python ./src/statusFetch.py <Flags>```
 
-4. the output tweets will appear in a CSV file (different file for each user) in the home direcory ```<Location on local>/TAU_EE_FinalProject/twitter```
+4. the output tweets will appear in a CSV file (different file for each user) in the home direcory 
 
 where the possible flags are:
 
