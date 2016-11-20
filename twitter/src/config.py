@@ -20,7 +20,7 @@ def getCmdLineOptions():
     parser = argparse.ArgumentParser(description='Twitter Statuses Fetcher')
 
     parser.add_argument('-u', '--screenName', required=True, action='append',
-                        help='The screen name of the person you want to fetch. Use -n <NAME1> -n <NAME2> for multiple names.'
+                        help='The screen name of the person you want to fetch. Use -u <NAME1> -u <NAME2> for multiple names.'
                              'Example: -u @BarackObama -u @realDonaldTrump')
 
     parser.add_argument('-s', '--startDate', default=epochTime, type=assertValidDate,
