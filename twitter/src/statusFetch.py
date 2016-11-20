@@ -91,21 +91,9 @@ def fetchTweetsToCsv(screenNames, startDateFilter, endDateFilter):
                 break 
             
         print("Filtering tweets by date")
-        
-        # remove newer tweets than endDateFilter
-        for i, tweet in enumerate(allTweetsList):
-            if getTimestamp(tweet.created_at) < endDateFilter:
-                break
-        allTweetsList = allTweetsList[i:]
-        
-        # remove older tweets then startDateFilter
-        for i, tweet in enumerate(reversed(allTweetsList)):
-            if getTimestamp(tweet.created_at) > startDateFilter:
-                break
-        allTweetsList = allTweetsList[:-i]
-        
         readableFormatTweetsList = [[tweet.id_str, stringTimestamp(getTimestamp(tweet.created_at)),
-                                     tweet.text.encode("utf-8")] for tweet in allTweetsList]
+                                     tweet.text.encode("utf-8")] for tweet in allTweetsList
+                                    if endDateFilter > getTimestamp(tweet.created_at) > startDateFilter] # filtering out dates
 
         saveTweetsToFile(screenName, readableFormatTweetsList)
 
